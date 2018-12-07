@@ -115,6 +115,10 @@ Redis Cluster中共有16384个hash slot，Redis会计算每个key的CRC16，将�
         2、单线程操作，避免了频繁的上下文切换
         3、采用了非阻塞I/O多路复用机制
 
+> `先删除缓存再更新数据库`，这个操作是错误的
+
+如果出现两个并发线程同时操作，更新操作是先删除了缓存，查询操作从数据库查了旧的数据，导致如果数据没有再更新的话，缓存中一直是旧数据
+
 ## Redis安装
 
 ### 通过homebrew
@@ -289,17 +293,19 @@ public class RedisUtil {
         实现：CachingConfigurerSupport
         最后使用注解：@Cacheable注解在方法上，该方法的返回结果既被缓存
 
-参考文献：\
-I/O多路复用：https://www.jianshu.com/p/db5da880154a \
-官方redis集群教程：https://redis.io/topics/cluster-tutorial \
-Redis系列九（redis集群高可用）：https://www.cnblogs.com/leeSmall/p/8414687.html \
-docker redis 集群（cluster）搭建：https://my.oschina.net/dslcode/blog/1936656 \
-springboot整合redis周围缓存：https://www.cnblogs.com/hlhdidi/p/7928074.html \
-Spring Data Redis官方教程：https://docs.spring.io/spring-data/data-redis/docs/current/reference/html/#redis:connectors \
-Spring Boot使用Spring Data Redis操作Redis（单机/集群）：https://www.cnblogs.com/EasonJim/p/7805665.html \
-【以下是复习Redis面试原理相关】
-Redis基础、高级特性与性能调优：https://www.jianshu.com/p/2f14bc570563 \
-Redis 主从复制 原理与用法：https://blog.csdn.net/Stubborn_Cow/article/details/50442950 \
-redis复习精讲【推荐】：https://www.cnblogs.com/rjzheng/p/9096228.htm \
-面试中关于Redis的问题看这篇就够了：https://mp.weixin.qq.com/s?__biz=MzU4NDQ4MzU5OA==&mid=2247483867&idx=1&sn=39a06fa3d6d8f09eefaaf3d2b15b40e4&chksm=fd9857bacaefdeaccd7cacf9dba5b702bf6f639377ded5a29fc1e56ae4f1d0a121ad0829c9dc&scene=21#wechat_redirect \
-一文轻松搞懂redis集群原理及搭建与使用：https://mp.weixin.qq.com/s?__biz=MzU4NDQ4MzU5OA==&mid=2247483863&idx=1&sn=8a7d08783f45d3af7947b8a2e7cc981e&chksm=fd9857b6caefdea072a7cec992fa1d32316ffdca8eea24e7f5a7871ce189bdd4e5b144619ae8&scene=21#wechat_redirect \
+参考文献：
+- [I/O多路复用](https://www.jianshu.com/p/db5da880154a)
+- [官方redis集群教程](https://redis.io/topics/cluster-tutorial)
+- [Redis系列九（redis集群高可用）](https://www.cnblogs.com/leeSmall/p/8414687.html)
+- [docker redis 集群（cluster）搭建](https://my.oschina.net/dslcode/blog/1936656)
+- [springboot整合redis周围缓存](https://www.cnblogs.com/hlhdidi/p/7928074.html)
+- [Spring Data Redis官方教程](https://docs.spring.io/spring-data/data-redis/docs/current/reference/html/#redis:connectors)
+- [Spring Boot使用Spring Data Redis操作Redis（单机/集群）](https://www.cnblogs.com/EasonJim/p/7805665.html)
+
+以下是复习Redis面试原理相关
+
+- [Redis基础、高级特性与性能调优](https://www.jianshu.com/p/2f14bc570563)
+- [Redis 主从复制 原理与用法](https://blog.csdn.net/Stubborn_Cow/article/details/50442950)
+- [redis复习精讲【推荐】](https://www.cnblogs.com/rjzheng/p/9096228.htm)
+- [面试中关于Redis的问题看这篇就够了](https://mp.weixin.qq.com/s?__biz=MzU4NDQ4MzU5OA==&mid=2247483867&idx=1&sn=39a06fa3d6d8f09eefaaf3d2b15b40e4&chksm=fd9857bacaefdeaccd7cacf9dba5b702bf6f639377ded5a29fc1e56ae4f1d0a121ad0829c9dc&scene=21#wechat_redirect)
+- [一文轻松搞懂redis集群原理及搭建与使用](https://mp.weixin.qq.com/s?__biz=MzU4NDQ4MzU5OA==&mid=2247483863&idx=1&sn=8a7d08783f45d3af7947b8a2e7cc981e&chksm=fd9857b6caefdea072a7cec992fa1d32316ffdca8eea24e7f5a7871ce189bdd4e5b144619ae8&scene=21#wechat_redirect)
